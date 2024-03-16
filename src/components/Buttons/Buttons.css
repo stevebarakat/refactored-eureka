@@ -1,0 +1,95 @@
+.transport-button {
+  background: var(--off-black);
+  color: var(--primary-color);
+  position: relative;
+  display: flex;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1px solid var(--secondary-color);
+}
+.transport-button:hover {
+  border: 1px solid var(--primary-color);
+}
+.transport-button:focus,
+.transport-button:focus-visible {
+  outline: 4px auto var(--primary-color);
+}
+.transport-button svg,
+.transport-button:focus-visible svg {
+  stroke: var(--primary-color-8);
+  fill: var(--primary-color-8);
+}
+
+.channel input[type="checkbox"] + label {
+  border-radius: 4px;
+  padding: 0.175rem 0.25rem;
+  user-select: none;
+  border: 1px solid transparent;
+}
+
+.channel input[type="checkbox"]:checked + label {
+  background: var(--primary-color);
+  color: black;
+}
+
+.channel input[type="checkbox"]:checked + label.mute {
+  background: none;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.channel input[type="checkbox"]:focus-visible + label {
+  outline: 4px auto var(--primary-color);
+}
+
+.toggle {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 4px;
+  width: 23px;
+  height: 23px;
+}
+
+.toggle label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid transparent;
+  padding: 0.1rem;
+  border-radius: 4px;
+  user-select: none;
+  cursor: pointer;
+  font-weight: 900;
+  color: var(--primary-color);
+  transition: all 0.2s;
+  aspect-ratio: 1/1;
+}
+
+.toggle:focus-within label {
+  outline: 1px solid;
+}
+
+.toggle-fx-btn {
+  padding: 0;
+  background: var(--blackLinear);
+  border: 1px solid var(--white-2);
+  border-radius: 6px;
+  line-height: 1.5;
+}
+
+.close-panel-btn {
+  background: none;
+  border: none;
+  transition: color 0.2s;
+}
+
+.close-panel-btn:hover {
+  color: var(--primary-color);
+  transition: color 0.2s;
+}

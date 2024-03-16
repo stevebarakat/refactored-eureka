@@ -1,0 +1,167 @@
+:root {
+  --white: hsl(0, 0%, 80%);
+  --white-2: hsl(0, 0%, 20%);
+  --white-3: hsl(0, 0%, 30%);
+  --white-4: hsl(0, 0%, 40%);
+  --white-5: hsl(0, 0%, 50%);
+  --primary-color: hsl(330 100% 70%);
+  --primary-color-1: hsl(330 100% 70%/0.1);
+  --primary-color-2: hsl(330 100% 70%/0.2);
+  --primary-color-3: hsl(330 100% 70%/0.3);
+  --primary-color-4: hsl(330 100% 70%/0.4);
+  --primary-color-5: hsl(330 100% 70%/0.5);
+  --primary-color-6: hsl(330 100% 70%/0.6);
+  --primary-color-7: hsl(330 100% 70%/0.7);
+  --primary-color-8: hsl(330 100% 70%/0.8);
+  --primary-color-9: hsl(330 100% 70%/0.9);
+  --secondary-color: rebeccapurple;
+  --off-black: hsl(213, 0%, 4%);
+  --blackLinear: linear-gradient(
+    to bottom,
+    hsl(213, 0%, 11%) 0%,
+    hsl(213, 0%, 1%) 100%
+  );
+  --greyLinear: linear-gradient(
+    to bottom,
+    hsl(213, 0%, 16%) 0%,
+    hsl(213, 0%, 6%) 100%
+  );
+  --background-color: hsl(270 50% 18%);
+
+  --shadow-color: 0deg 0% 0%;
+  --shadow-elevation-low: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.1),
+    0.4px 0.4px 1px -1.2px hsl(var(--shadow-color) / 0.1),
+    1px 2px 2.5px -2.5px hsl(var(--shadow-color) / 0.1);
+  --shadow-elevation-medium: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.11),
+    0.4px 1.6px 2px -0.4px hsl(var(--shadow-color) / 0.11),
+    2.1px 4.1px 5.2px -1.7px hsl(var(--shadow-color) / 0.11),
+    5px 10px 12.6px -2.5px hsl(var(--shadow-color) / 0.11);
+  --shadow-elevation-high: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.1),
+    1.5px 2.9px 3.7px -0.4px hsl(var(--shadow-color) / 0.1),
+    2.7px 5.4px 6.4px -0.7px hsl(var(--shadow-color) / 0.1),
+    4.5px 8.9px 11.2px -1.1px hsl(var(--shadow-color) / 0.1),
+    7.1px 14.3px 14px -1.4px hsl(var(--shadow-color) / 0.1),
+    11.2px 22.3px 28.1px -1.4px hsl(var(--shadow-color) / 0.1),
+    17px 33.9px 42.7px -2.1px hsl(var(--shadow-color) / 0.1),
+    25px 50px 62.9px -2.5px hsl(var(--shadow-color) / 0.1);
+}
+
+* {
+  accent-color: var(--primary-color);
+  color-scheme: light dark;
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+
+body {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-family: system-ui, Helvetica, Arial, sans-serif;
+  color: var(--white);
+  background: var(--background-color);
+}
+
+#root {
+  display: grid;
+  min-height: 80vh;
+  place-content: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+h3 {
+  margin: 0 0 8px;
+  text-align: left;
+  font-weight: 200;
+  /* text-decoration: underline; */
+  /* text-decoration-thickness: 2px; */
+  /* text-underline-offset: 3px; */
+}
+
+select {
+  border-radius: 6px;
+  border: 1px solid var(--secondary-color);
+  background: var(--off-black);
+  max-width: 100%;
+  margin: 0 auto 4px;
+}
+
+select[name="fx-select"] {
+  background: var(--blackLinear);
+  margin: 0px;
+}
+
+select[name="song-select"] {
+  margin: 12px auto;
+  padding: 12px;
+}
+
+.range-y {
+  appearance: none;
+  background: none;
+  rotate: 270deg;
+  position: relative;
+  border-radius: 20px;
+  outline-offset: -5px;
+  padding: 0 6px;
+}
+
+.fx-panel {
+  background: var(--blackLinear);
+  border-radius: 8px;
+  box-shadow: var(--shadow-elevation-medium);
+  padding: 8px 12px;
+  z-index: 50;
+  font-weight: 200;
+  & ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    & li {
+      border-top: 1px dotted white;
+      padding-top: 16px;
+      &:first-of-type {
+        padding-top: 4px;
+        border-top: none;
+      }
+      &:last-of-type {
+        padding-bottom: 8px;
+      }
+    }
+  }
+}
+
+.fx-panel-label {
+  display: flex;
+  font-weight: 400;
+  font-size: 1.2rem;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: var(--white);
+  & .circle {
+    background: var(--white);
+    color: #232323;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.2rem;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.fx-menu {
+  background: hsl(0, 0%, 20%);
+  padding: 8px;
+  box-shadow: var(--shadow-elevation-medium);
+  border: 1px solid hsl(0, 0%, 35%);
+  border-radius: 4px;
+}
