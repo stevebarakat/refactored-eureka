@@ -267,7 +267,7 @@ export const mixerMachine = createMachine(
         assertEvent(event, "CHANGE_MAIN_VOLUME");
         const scaled = scale(logarithmically(event.volume));
         Destination.volume.value = scaled;
-        return { volume: event.volume };
+        return { mainVolume: event.volume };
       }),
       disposeTracks: assign(({ context }) => {
         context.players?.forEach((player: Player | undefined, i: number) => {
