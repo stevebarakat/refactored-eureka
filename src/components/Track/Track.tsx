@@ -7,16 +7,8 @@ import { ToggleContext } from "@/machines/toggleMachine";
 import { TrackContext } from "@/machines/trackMachine";
 
 export default function Track({ trackId }: { trackId: number }) {
-  // const context = MixerContext.useSelector(
-  //   (state) => state.context.trackMachineRefs[trackId].getSnapshot().context
-  // );
-
   const { context } = TrackContext.useSelector((s) => s);
-
   const { channel, track, fx } = context;
-
-  // console.log("context", context);
-  // console.log("fx", fx);
 
   fx && channel?.chain(...fx);
 
@@ -32,7 +24,7 @@ export default function Track({ trackId }: { trackId: number }) {
           <Fader>
             <Meter channel={channel} />
           </Fader>
-          <SoloMute trackId={trackId} />
+          <SoloMute />
           <ChannelLabel name={track?.name || `track ${trackId + 1}`} />
         </div>
       </div>

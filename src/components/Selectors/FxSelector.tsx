@@ -1,12 +1,13 @@
 import { array } from "@/utils";
 import { upperFirst } from "lodash";
-import { ToggleContext } from "@/machines/toggleMachine";
 import { TrackContext } from "@/machines/trackMachine";
 
 function FxSelector({ trackId }: { trackId: number }) {
-  const sendToggle = ToggleContext.useActorRef().send;
   const { fxNames } = TrackContext.useSelector((state) => state.context);
   const { send } = TrackContext.useActorRef();
+  const isOpen = TrackContext.useSelector((state) =>
+    state.matches({ fxPanel: "open" })
+  );
 
   function handleSetFxNames(
     e: React.FormEvent<HTMLSelectElement>,
@@ -18,15 +19,12 @@ function FxSelector({ trackId }: { trackId: number }) {
     send({ type: "CHANGE_FX", fxId, fxName, action });
   }
 
-  const state = ToggleContext.useSelector((s) => s);
-  const isOpen = state.matches("active");
-
   return (
     <>
       {fxNames.length > 0 && (
         <button
           className="toggle-fx-btn"
-          onClick={() => sendToggle({ type: "TOGGLE" })}
+          onClick={() => send({ type: "TOGGLE_FX_PANEL" })}
         >
           {isOpen ? "Close Fx" : "Open Fx"}
         </button>

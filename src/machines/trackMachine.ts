@@ -19,6 +19,7 @@ export const trackMachine = setup({
       | { type: "TOGGLE_SOLO"; channel: Channel }
       | { type: "TOGGLE_MUTE"; channel: Channel }
       | { type: "CHANGE_VOLUME"; volume: number }
+      | { type: "TOGGLE_FX_PANEL" }
       | {
           type: "CHANGE_FX";
           fxName: string;
@@ -169,6 +170,25 @@ export const trackMachine = setup({
               actions: {
                 type: "toggleMute",
               },
+            },
+          },
+        },
+      },
+    },
+    fxPanel: {
+      initial: "open",
+      states: {
+        open: {
+          on: {
+            TOGGLE_FX_PANEL: {
+              target: "closed",
+            },
+          },
+        },
+        closed: {
+          on: {
+            TOGGLE_FX_PANEL: {
+              target: "open",
             },
           },
         },

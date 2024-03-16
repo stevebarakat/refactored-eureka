@@ -6,7 +6,6 @@ import Delay from "../Fx/Delay";
 import { useState, useEffect } from "react";
 import { FxHeader } from "../FxPanel";
 import { TrackContext } from "@/machines/trackMachine";
-import { ToggleContext } from "@/machines/toggleMachine";
 
 const defaults = {
   className: "fx-panel",
@@ -16,7 +15,9 @@ const defaults = {
 };
 
 function FxPanel({ trackId }: { trackId: number }) {
-  const isOpen = ToggleContext.useSelector((state) => state.matches("active"));
+  const isOpen = TrackContext.useSelector((state) =>
+    state.matches({ fxPanel: "open" })
+  );
   const { track, fx, fxNames } = TrackContext.useSelector((s) => s.context);
 
   const [delayIndex, setDelayIndex] = useState(-1);
