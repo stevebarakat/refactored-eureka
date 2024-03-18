@@ -7,28 +7,29 @@ type Props = {
   direction: string;
   amount: number;
 };
-export default function Seek({ direction }: Props) {
+
+export default function Seek({ direction, amount }: Props) {
   const { send } = MixerContext.useActorRef();
 
-  const amount = () => {
-    if (t.seconds < 10) {
-      return t.seconds;
-    } else {
-      return 10;
-    }
-  };
+  const canSeek = MixerContext.useSelector((state) =>
+    state.matches({ ready: { transportMachine: "started" } })
+  );
 
-  const state = MixerContext.useSelector((state) => state);
   return (
     <TransportButton
       onClick={() => {
-        console.log("state", state);
-        console.log("state.context", state.context);
-        console.log("trackMachineRefs", state.context.trackMachineRefs);
-
-        const ubu = amount();
-        console.log("ubu", ubu);
-        send({ type: "SEEK", direction, amount: ubu });
+        const dynamicAmount = () => {
+          if (canSeek && direction === "forward") {
+            return amount;
+          } else {
+            if (t.seconds < amount) {
+              return t.seconds;
+            } else {
+              return amount;
+            }
+          }
+        };
+        send({ type: "SEEK", direction, amount: dynamicAmount() });
       }}
     >
       {direction === "forward" ? <FastFwdIcon /> : <RewindIcon />}

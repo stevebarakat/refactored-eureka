@@ -10,7 +10,8 @@ function Clock() {
   const { sourceSong } = MixerContext.useSelector((state) => state.context);
 
   if (sourceSong) {
-    if (t.seconds < 0 || t.seconds > sourceSong.endPosition) {
+    // if (t.seconds < 0 || t.seconds > sourceSong.endPosition) {
+    if (t.seconds > sourceSong.endPosition) {
       send({ type: "RESET" });
     }
   }

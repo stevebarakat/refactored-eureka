@@ -241,7 +241,10 @@ export const mixerMachine = createMachine(
         };
       }),
 
-      reset: () => t.stop(),
+      reset: () => {
+        t.stop();
+        t.seconds = 0;
+      },
       play: () => t.start(),
       pause: () => t.pause(),
       seek: ({ event }) => {
@@ -275,10 +278,8 @@ export const mixerMachine = createMachine(
       builder: fromPromise(async () => await loaded()),
     },
     guards: {
-      "canSeek?": ({ context, event }) => {
+      "canSeek?": ({ event }) => {
         assertEvent(event, "SEEK");
-        console.log("event.amount", event.amount);
-        console.log("t.seconds > event.amount", t.seconds > event.amount);
         return event.direction === "backward" ? t.seconds > event.amount : true;
       },
       // "canStop?": () => t.seconds !== 0,
