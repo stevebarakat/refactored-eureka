@@ -6,7 +6,7 @@ function VuMeter({ channel, options }: MeterProps) {
 
   const width = options?.width ?? 12;
   const height = (options?.height || 200) - 4;
-  const meterVals = useMeter({ channel, canvas, options });
+  const meterVal = useMeter({ channel, canvas, options });
 
   return (
     <canvas
@@ -14,7 +14,7 @@ function VuMeter({ channel, options }: MeterProps) {
       ref={canvas}
       width={width}
       height={height}
-      data-meterlevel={meterVals}
+      data-meterlevel={meterVal}
     />
   );
 }

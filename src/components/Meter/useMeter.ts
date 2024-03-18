@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Meter } from "tone";
 
 const MAX_BOX_COUNT = 100;
+const METER_OFFSET = 85;
 
 // Colors
 const hiOn = "hsla(250, 80%, 70%, 0.9)";
@@ -18,7 +19,7 @@ type Props = {
 };
 
 function useMeter({ channel, canvas, options }: Props) {
-  const [meterVals, setMeterVals] = useState<number>();
+  const [meterVal, setMeterVal] = useState<number>();
   const meter = useRef<Meter | undefined>();
   const animationFrame = useRef<number | null>(null);
 
@@ -28,7 +29,7 @@ function useMeter({ channel, canvas, options }: Props) {
   }, [channel]);
 
   useEffect(() => {
-    const draw = canvas.current?.getContext("2d");
+    const ctx = canvas.current?.getContext("2d");
 
     const width = options?.width ?? 12;
     const height = (options?.height || 200) - 4;
@@ -58,31 +59,32 @@ function useMeter({ channel, canvas, options }: Props) {
     };
 
     function drawMeter() {
-      if (!canvas.current || draw == null)
+      if (!canvas.current || ctx == null)
         throw new Error("Could not get canvas context");
-      const meterValue: number = Number(canvas.current.dataset.meterlevel) + 85;
+      const meterValue: number =
+        Number(canvas.current.dataset.meterlevel) + METER_OFFSET;
 
       // Draw the container
-      draw.save();
-      draw.beginPath();
-      draw.rect(0, 0, width, height);
-      draw.fillStyle = "rgb(12,22,32)";
-      draw.fill();
-      draw.restore();
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, width, height);
+      ctx.fillStyle = "hsl(0, 0%, 2%)";
+      ctx.fill();
+      ctx.restore();
 
       // Draw the boxes
-      draw.save();
-      draw.translate(boxGapX, boxGapY);
+      ctx.save();
+      ctx.translate(boxGapX, boxGapY);
       for (let i = 0; i < boxCount; i++) {
         const id = Math.abs(i - (boxCount - 1)) + 1;
 
-        draw.beginPath();
-        draw.rect(0, 0, boxWidth, boxHeight);
-        draw.fillStyle = getBoxColor(id, meterValue);
-        draw.fill();
-        draw.translate(0, boxHeight + boxGapY);
+        ctx.beginPath();
+        ctx.rect(0, 0, boxWidth, boxHeight);
+        ctx.fillStyle = getBoxColor(id, meterValue);
+        ctx.fill();
+        ctx.translate(0, boxHeight + boxGapY);
       }
-      draw.restore();
+      ctx.restore();
       animationFrame.current = requestAnimationFrame(drawMeter);
     }
 
@@ -98,7 +100,7 @@ function useMeter({ channel, canvas, options }: Props) {
     if (typeof vals === "number") return;
     vals?.forEach((val) => {
       if (val < -500) return;
-      setMeterVals(val);
+      setMeterVal(val);
     });
 
     requestAnimationFrame(animateMeter);
@@ -106,7 +108,7 @@ function useMeter({ channel, canvas, options }: Props) {
 
   useMemo(() => requestAnimationFrame(animateMeter), [animateMeter]);
 
-  return meterVals;
+  return meterVal;
 }
 
 export default useMeter;
