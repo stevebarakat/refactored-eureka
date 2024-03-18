@@ -10,10 +10,10 @@ export default function Mixer() {
 
   const ready = MixerContext.useSelector((state) => state.matches("ready"));
 
-  const state = MixerContext.useSelector((state) => state);
-  console.log("state", state);
-  console.log("state.context", state.context);
-  console.log("trackMachineRefs", state.context.trackMachineRefs);
+  // const state = MixerContext.useSelector((state) => state);
+  // console.log("state", state);
+  // console.log("state.context", state.context);
+  // console.log("trackMachineRefs", state.context.trackMachineRefs);
 
   if (!ready) return null;
 

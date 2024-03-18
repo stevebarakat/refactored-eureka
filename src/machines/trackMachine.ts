@@ -53,11 +53,8 @@ export const trackMachine = setup({
     }),
     setFx: assign(({ context, event }) => {
       assertEvent(event, "CHANGE_FX");
-      console.log("SET FX!!!");
-      console.log("event", event);
 
       if (event.action === "add") {
-        console.log("ADDING FX!!!");
         const spliced = context.fxNames.toSpliced(event.fxId, 1);
         const fxSpliced = context.fx.toSpliced(event.fxId, 1);
         context.fx[event.fxId]?.dispose();
@@ -76,10 +73,12 @@ export const trackMachine = setup({
             };
 
           default:
-            break;
+            return {
+              fxNames: context.fxNames,
+              fx: context.fx,
+            };
         }
       } else {
-        console.log("REMOVING FX!!!");
         context.fx[event.fxId].dispose();
         return {
           fxNames: context.fxNames.toSpliced(event.fxId, 1),
@@ -109,19 +108,13 @@ export const trackMachine = setup({
   type: "parallel",
   on: {
     CHANGE_FX: {
-      actions: {
-        type: "setFx",
-      },
+      actions: "setFx",
     },
     CHANGE_PAN: {
-      actions: {
-        type: "setPan",
-      },
+      actions: "setPan",
     },
     CHANGE_VOLUME: {
-      actions: {
-        type: "setVolume",
-      },
+      actions: "setVolume",
     },
   },
   states: {
@@ -132,9 +125,7 @@ export const trackMachine = setup({
           on: {
             TOGGLE_SOLO: {
               target: "active",
-              actions: {
-                type: "toggleSolo",
-              },
+              actions: "toggleSolo",
             },
           },
         },
@@ -142,9 +133,7 @@ export const trackMachine = setup({
           on: {
             TOGGLE_SOLO: {
               target: "inactive",
-              actions: {
-                type: "toggleSolo",
-              },
+              actions: "toggleSolo",
             },
           },
         },
@@ -157,9 +146,7 @@ export const trackMachine = setup({
           on: {
             TOGGLE_MUTE: {
               target: "active",
-              actions: {
-                type: "toggleMute",
-              },
+              actions: "toggleMute",
             },
           },
         },
@@ -167,9 +154,7 @@ export const trackMachine = setup({
           on: {
             TOGGLE_MUTE: {
               target: "inactive",
-              actions: {
-                type: "toggleMute",
-              },
+              actions: "toggleMute",
             },
           },
         },

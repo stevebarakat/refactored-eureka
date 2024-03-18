@@ -158,7 +158,6 @@ export const mixerMachine = createMachine(
       }),
       reset: () => {
         t.stop();
-        t.seconds = 0;
       },
       play: () => t.start(),
       pause: () => t.pause(),
