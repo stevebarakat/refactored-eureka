@@ -28,9 +28,7 @@ type InitialContext = {
 
 export const mixerMachine = createMachine(
   {
-    /** @xstate-layout N4IgpgJg5mDOIC5QFsCWAPMAnAsgQwGMALVAOzADoAjAV1QBsIyoBiCAe3IrIDd2BrSrQYRsAbQAMAXUSgADu1ioALqk6yQ6RAEYAbABYArBQAcAJjOGJATgm7L1s-oA0IAJ6IDZihZMnt1tr+AMzaAOyGAL6RrmiYuIQkXMKMzCzYWOxYFHL0eMoAZlnI1HSM4tIaCkqq6kiaOrrB3s2WNnYOTq4eCIba3hIR+kHtEiZRMSBx2PjEZJRYYHgQbhTKWIT8s0mUAMrs9OzcpISqPGAsACoA8gDitwAyAKKSMvXVKmqkGloIegGmXQ2fTWMIgszBFzuHTNYIUYLWXS2My6PRhCK6aKxDAzRLzCiLZardabbb4-aHCinVDnK53R4vSrvRSfOqgX7afTowHA0HgyHdGEQ+GI5Go3TowyYybTBJzLiElZrDYELZ4rg4GjKShkam0m73Z6vKos2rfeoc6zWEw86wgsGOAXQv6hOEIpESFFojFYqY4uU7AlLJUk1VkjVayh6i4GhnG5k1L4-HTjXS2+38qE9bSukUer0Sn0y-3hhbB4kqtXyi4AYQAEgBBABytyeAH0AGrXB4AVRwjLe8lNSYtiAswTCFEMJhsM7MtlBlkFf0G+gonsMwyRhmC-n0wV9stLQaJytJ6ouPYACgARBuXdsAMQAGm2mw3+7t40PE2yGghx2sKcZ2tT0FzCJdnRzMxJw3LdrB3PcD2LeJj0VCtz2rFh62bVs2yvZtvxAD4zWTACnEnadZzAmwIMMZdtACNM4L0BDd05ZDsVQi8TxWFgACUnl2J5LiIkiR3ZRATAMChdDkpxIQkfQmmXaxgjhewJAkTdgj6MI7AmLjcWrXi3BYYSngAaTE4c-w5Lk0xMLkJHCMZDGnMEGN0HdZIcCd-BsQxEUPEsePQ7DGxbdsu17fsbN-c1JL+MJOVMZzXPGDys0aHz7CC-ztEC4KUOMwNSHYZR+PLcynmeGtLjbXZrhbeLWUS-9FwoNTbGUpwuUCXRlx3OEwl0sJxjtWwJpC7iTPQs9SFgBQsGUY9YGUdg5DkSAWAInthNa0jRwQExAlkqw-B3KUIkYhi0QoIJXWnAIzBMMJpSMgN8XmklFuW1aePWvAVp23ZLgbfjRKZH82rI064W0C7xl0iU+jMBjdO8AbXve+Txn0aJJnK0R4HqI8LxNBKyLktcbG8wYnKBK1rGXSwBiGEZbDcmbSvxcrKvLSnYeO8a1xuly7BBByWeddztAoCCprMMC9EGHmvq4DIsiFo6kqCM6KNCQLRqUkwhshB62IhQqLH0Jz1ePFImFIKAdYk-9+hBeEbuGMZPX07LegsS2d2tz0nHtkqNbLIk3bsxAUoGRErFFpmrWXFKbU07T9z0gyHbC8szzDCmE2FvX2PTPlHUDm213dMVvSlAu5qL0Mq0DCl2Dj9r7PnKuHQhWuczdUVPXFSUPr9WbAx+ytjy745ox7sjOTtAfMwY6280bwtm6jtC2-nnjF+XsvdY9kEbWk3lB6dbNhlH-MJ6LT7D9Pdvj01bUV+OkZr6ZhmGud1hQN3Hk3Ke5NW4f2PiZb+OoTgEDOGAX+es3pwhvpNO+tcLDyzAQWSeLdZ5H0woGeBVIkE0hQefd2HI3qTkwUAoeDF9ASCfrvQhB9C4wLwH9LIANqyoP-O9CQ65k4M2UjYdOUE7BAUejmZ6jg3qQNCtAkMGw+ErTWhtLakAhG-BnDaOmKdGZSJltmGC3gr5BEUXbRGRDvokM0QIwMQMQYQH0ToP2CtDDKyctJSEQIzZQScKImcSkOgBBzGMQmkQgA */
     id: "mixerMachine",
-
     context: {
       mainVolume: -32,
       currentTime: 0,
@@ -39,7 +37,6 @@ export const mixerMachine = createMachine(
       players: [],
       channels: [],
     },
-
     on: {
       SELECT_SONG: {
         target: ".building",
@@ -48,29 +45,22 @@ export const mixerMachine = createMachine(
     },
     states: {
       notReady: {},
-
       error: {
         entry: "disposeTracks",
       },
-
       building: {
         entry: "buildMixer",
-
         invoke: {
           src: "builder",
           input: ({ context }) => ({ sourceSong: context.sourceSong }),
-
           onDone: { target: "ready" },
-
           onError: {
             target: "error",
             actions: "logError",
           },
-
           id: "builder",
         },
       },
-
       ready: {
         on: {
           CHANGE_MAIN_VOLUME: {
@@ -78,112 +68,38 @@ export const mixerMachine = createMachine(
               type: "setMainVolume",
             },
           },
+          RESET: {
+            target: "ready",
+            actions: {
+              type: "reset",
+            },
+          },
+          SEEK: {
+            actions: {
+              type: "seek",
+            },
+          },
         },
-
         exit: ["reset", "disposeTracks"],
         states: {
-          mixerMachine: {
-            type: "parallel",
-
-            states: {
-              Solo: {
-                initial: "inactive",
-
-                states: {
-                  inactive: {
-                    on: {
-                      TOGGLE: {
-                        target: "active",
-                        actions: "toggleSolo",
-                      },
-                    },
-                  },
-
-                  active: {
-                    on: {
-                      TOGGLE: "inactive",
-                    },
-                  },
-                },
-              },
-              Mute: {
-                initial: "inactive",
-
-                states: {
-                  inactive: {
-                    on: {
-                      TOGGLE: {
-                        target: "active",
-                        actions: "toggleMute",
-                      },
-                    },
-                  },
-
-                  active: {
-                    on: {
-                      TOGGLE: "inactive",
-                    },
-                  },
-                },
-              },
-            },
-
+          stopped: {
             on: {
-              CHANGE_VOLUME: {
-                target: undefined,
-                actions: "setVolume",
-              },
-              CHANGE_PAN: {
-                target: undefined,
-                actions: "setPan",
+              START: {
+                target: "started",
+                actions: "play",
               },
             },
           },
-
-          transportMachine: {
+          started: {
             on: {
-              RESET: {
-                // guard: "canStop?",
-                target: "transportMachine",
-
-                actions: {
-                  type: "reset",
-                },
-              },
-              SEEK: {
-                // guard: "canSeek?",
-
-                actions: {
-                  type: "seek",
-                },
+              PAUSE: {
+                target: "stopped",
+                actions: "pause",
               },
             },
-            states: {
-              stopped: {
-                on: {
-                  START: {
-                    target: "started",
-                    // guard: "canPlay?",
-                    actions: "play",
-                  },
-                },
-              },
-              started: {
-                on: {
-                  PAUSE: {
-                    target: "stopped",
-                    // guard: "canStop?",
-                    actions: "pause",
-                  },
-                },
-              },
-            },
-
-            initial: "stopped",
           },
         },
-
-        type: "parallel",
+        initial: "stopped",
       },
     },
 
@@ -240,7 +156,6 @@ export const mixerMachine = createMachine(
           }),
         };
       }),
-
       reset: () => {
         t.stop();
         t.seconds = 0;
@@ -276,14 +191,6 @@ export const mixerMachine = createMachine(
     },
     actors: {
       builder: fromPromise(async () => await loaded()),
-    },
-    guards: {
-      "canSeek?": ({ event }) => {
-        assertEvent(event, "SEEK");
-        return event.direction === "backward" ? t.seconds > event.amount : true;
-      },
-      // "canStop?": () => t.seconds !== 0,
-      // "canPlay?": () => !(t.state === "started"),
     },
   }
 );

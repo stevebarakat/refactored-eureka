@@ -12,7 +12,7 @@ export default function Seek({ direction, amount }: Props) {
   const { send } = MixerContext.useActorRef();
 
   const canSeek = MixerContext.useSelector((state) =>
-    state.matches({ ready: { transportMachine: "started" } })
+    state.matches({ ready: "started" })
   );
 
   return (
@@ -22,11 +22,7 @@ export default function Seek({ direction, amount }: Props) {
           if (canSeek && direction === "forward") {
             return amount;
           } else {
-            if (t.seconds < amount) {
-              return t.seconds;
-            } else {
-              return amount;
-            }
+            return t.seconds < amount ? t.seconds : amount;
           }
         };
         send({ type: "SEEK", direction, amount: dynamicAmount() });
