@@ -14,7 +14,6 @@ import {
   stopChild,
 } from "xstate";
 import { scale, logarithmically } from "@/utils";
-import { clockMachine } from "./clockMachine";
 import { createActorContext } from "@xstate/react";
 import { trackMachine } from "./trackMachine";
 
@@ -22,7 +21,6 @@ type InitialContext = {
   mainVolume: number;
   currentTime: number;
   sourceSong?: SourceSong | undefined;
-  clockMachineRef: any;
   trackMachineRefs: any[];
   players: (Player | undefined)[];
   channels: (Channel | undefined)[];
@@ -37,13 +35,10 @@ export const mixerMachine = createMachine(
       mainVolume: -32,
       currentTime: 0,
       sourceSong: undefined,
-      clockMachineRef: undefined,
       trackMachineRefs: [],
       players: [],
       channels: [],
     },
-
-    entry: "disposeTracks",
 
     on: {
       SELECT_SONG: {
@@ -148,7 +143,7 @@ export const mixerMachine = createMachine(
           transportMachine: {
             on: {
               RESET: {
-                guard: "canStop?",
+                // guard: "canStop?",
                 target: "transportMachine",
 
                 actions: {
@@ -156,7 +151,7 @@ export const mixerMachine = createMachine(
                 },
               },
               SEEK: {
-                guard: "canSeek?",
+                // guard: "canSeek?",
 
                 actions: {
                   type: "seek",
@@ -168,7 +163,7 @@ export const mixerMachine = createMachine(
                 on: {
                   START: {
                     target: "started",
-                    guard: "canPlay?",
+                    // guard: "canPlay?",
                     actions: "play",
                   },
                 },
@@ -177,7 +172,7 @@ export const mixerMachine = createMachine(
                 on: {
                   PAUSE: {
                     target: "stopped",
-                    guard: "canStop?",
+                    // guard: "canStop?",
                     actions: "pause",
                   },
                 },
@@ -243,12 +238,6 @@ export const mixerMachine = createMachine(
               }),
             ];
           }),
-          clockMachineRef: spawn(clockMachine, {
-            id: "clock-machine",
-            input: {
-              sourceSong,
-            },
-          }),
         };
       }),
 
@@ -258,9 +247,9 @@ export const mixerMachine = createMachine(
       seek: ({ event }) => {
         assertEvent(event, "SEEK");
         if (event.direction === "forward") {
-          t.seconds = t.seconds + 10;
+          t.seconds = t.seconds + event.amount;
         } else {
-          t.seconds = t.seconds - 10;
+          t.seconds = t.seconds - event.amount;
         }
       },
       setMainVolume: assign(({ event }) => {
@@ -274,13 +263,11 @@ export const mixerMachine = createMachine(
           player?.dispose();
           context.channels[i]?.dispose();
           stopChild(context.trackMachineRefs[i]);
-          stopChild(context.clockMachineRef);
         });
         return {
           channels: [],
           players: [],
           trackMachineRefs: [],
-          clockMachineRef: undefined,
         };
       }),
     },
@@ -290,13 +277,12 @@ export const mixerMachine = createMachine(
     guards: {
       "canSeek?": ({ context, event }) => {
         assertEvent(event, "SEEK");
-        return event.direction === "forward"
-          ? t.seconds < context.sourceSong!.endPosition - event.amount
-          : t.seconds > event.amount;
+        console.log("event.amount", event.amount);
+        console.log("t.seconds > event.amount", t.seconds > event.amount);
+        return event.direction === "backward" ? t.seconds > event.amount : true;
       },
-
-      "canStop?": () => t.seconds !== 0,
-      "canPlay?": () => !(t.state === "started"),
+      // "canStop?": () => t.seconds !== 0,
+      // "canPlay?": () => !(t.state === "started"),
     },
   }
 );

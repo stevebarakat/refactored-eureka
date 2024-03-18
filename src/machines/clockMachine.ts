@@ -29,10 +29,10 @@ export const clockMachine = setup({
               currentTime: t.seconds,
             })),
           },
-          {
-            guard: ({ context }) =>
-              Boolean(context.currentTime > context.sourceSong!.endPosition),
-          },
+          // {
+          //   guard: ({ context }) =>
+          //     Boolean(context.currentTime > context.sourceSong!.endPosition),
+          // },
         ],
       },
     },

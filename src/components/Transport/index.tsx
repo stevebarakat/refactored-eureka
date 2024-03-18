@@ -9,22 +9,22 @@ const Transport = () => {
   const { sourceSong } = MixerContext.useSelector((state) => state.context);
   return (
     <div className="flex gap4">
-      <ClockContext.Provider
+      {/* <ClockContext.Provider
         options={{
           input: {
             sourceSong,
           },
         }}
-      >
-        <div className="flex gap2">
-          <Reset />
-          <Seek direction="backward" amount={10} />
-          <Play />
-          <Seek direction="forward" amount={10} />
-        </div>
+      > */}
+      <div className="flex gap2">
+        <Reset />
+        <Seek direction="backward" amount={10} />
+        <Play />
+        <Seek direction="forward" amount={10} />
+      </div>
 
-        <Clock />
-      </ClockContext.Provider>
+      <Clock />
+      {/* </ClockContext.Provider> */}
     </div>
   );
 };
