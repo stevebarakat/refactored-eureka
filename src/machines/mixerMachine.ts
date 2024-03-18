@@ -80,26 +80,52 @@ export const mixerMachine = createMachine(
             },
           },
         },
+        initial: "stopped",
         exit: ["reset", "disposeTracks"],
         states: {
           stopped: {
             on: {
               START: {
                 target: "started",
-                actions: "play",
+                actions: {
+                  type: "play",
+                },
               },
             },
           },
           started: {
             on: {
               PAUSE: {
+                target: "paused",
+                actions: {
+                  type: "pause",
+                },
+              },
+              RESET: {
                 target: "stopped",
-                actions: "pause",
+                actions: {
+                  type: "reset",
+                },
+              },
+            },
+          },
+          paused: {
+            on: {
+              START: {
+                target: "started",
+                actions: {
+                  type: "play",
+                },
+              },
+              RESET: {
+                target: "stopped",
+                actions: {
+                  type: "reset",
+                },
               },
             },
           },
         },
-        initial: "stopped",
       },
     },
 
@@ -156,9 +182,7 @@ export const mixerMachine = createMachine(
           }),
         };
       }),
-      reset: () => {
-        t.stop();
-      },
+      reset: () => t.stop(),
       play: () => t.start(),
       pause: () => t.pause(),
       seek: ({ event }) => {

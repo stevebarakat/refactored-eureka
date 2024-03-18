@@ -11,8 +11,9 @@ type Props = {
 export default function Seek({ direction, amount }: Props) {
   const { send } = MixerContext.useActorRef();
 
-  const canSeek = MixerContext.useSelector((state) =>
-    state.matches({ ready: "started" })
+  const canSeek = MixerContext.useSelector(
+    (state) =>
+      state.matches({ ready: "started" }) || state.matches({ ready: "paused" })
   );
 
   return (

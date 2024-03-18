@@ -7,7 +7,7 @@ import "./clock.css";
 function Clock() {
   const animationFrame = useRef(0);
   const { send } = MixerContext.useActorRef();
-  const [clock, setClock] = useState(formatMilliseconds(0));
+  const [clock, setClock] = useState(0);
   const { sourceSong } = MixerContext.useSelector((state) => state.context);
 
   const animateClock = useCallback(() => {
@@ -17,7 +17,7 @@ function Clock() {
         send({ type: "RESET" });
       }
     }
-    setClock(formatMilliseconds(t.seconds));
+    setClock(t.seconds);
     animationFrame.current = requestAnimationFrame(animateClock);
   }, [send, sourceSong]);
 
@@ -26,7 +26,7 @@ function Clock() {
   return (
     <div className="clock">
       <div className="ghost">88:88:88</div>
-      {clock}
+      {formatMilliseconds(clock)}
     </div>
   );
 }
