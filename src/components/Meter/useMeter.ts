@@ -20,8 +20,7 @@ type Props = {
 function useMeter({ channel, canvas, options }: Props) {
   const [meterVals, setMeterVals] = useState<number>();
   const meter = useRef<Meter | undefined>();
-  const pencil = useRef<number | null>(null);
-  const animation = useRef<number | null>(null);
+  const animationFrame = useRef<number | null>(null);
 
   useEffect(() => {
     meter.current = new Meter({ channels: 2 });
@@ -84,13 +83,13 @@ function useMeter({ channel, canvas, options }: Props) {
         draw.translate(0, boxHeight + boxGapY);
       }
       draw.restore();
-      pencil.current = requestAnimationFrame(drawMeter);
+      animationFrame.current = requestAnimationFrame(drawMeter);
     }
 
     drawMeter();
 
     return () => {
-      pencil.current && cancelAnimationFrame(pencil.current);
+      animationFrame.current && cancelAnimationFrame(animationFrame.current);
     };
   }, [options, canvas]);
 
@@ -98,10 +97,11 @@ function useMeter({ channel, canvas, options }: Props) {
     const vals = meter.current?.getValue();
     if (typeof vals === "number") return;
     vals?.forEach((val) => {
+      if (val < -500) return;
       setMeterVals(val);
     });
 
-    animation.current = requestAnimationFrame(animateMeter);
+    requestAnimationFrame(animateMeter);
   }, []);
 
   useMemo(() => requestAnimationFrame(animateMeter), [animateMeter]);
