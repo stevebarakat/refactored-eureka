@@ -4,8 +4,8 @@ import useMeter from "./useMeter";
 function VuMeter({ channel, options }: MeterProps) {
   const canvas = useRef<HTMLCanvasElement | null>(null);
 
-  const width = options?.width ?? 12;
-  const height = (options?.height || 200) - 4;
+  const width = options?.width || 12;
+  const height = (options?.height || 200) - width;
   const meterVal = useMeter({ channel, canvas, options });
 
   return (

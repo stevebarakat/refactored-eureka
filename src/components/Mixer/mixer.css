@@ -66,10 +66,6 @@
   max-width: 100%;
 }
 
-.volume::-webkit-slider-runnable-track {
-  cursor: pointer;
-}
-
 .volume::-webkit-slider-thumb {
   appearance: none;
   background-image: -webkit-linear-gradient(
@@ -90,10 +86,6 @@
   width: 25px;
   position: relative;
   transform: rotate(90deg);
-}
-
-.volume::-moz-range-track {
-  cursor: pointer;
 }
 
 .volume::-moz-range-thumb {
@@ -119,11 +111,21 @@
 }
 
 .volume::-webkit-slider-runnable-track {
-  top: -8px;
+  cursor: pointer;
 }
 
 .volume::-moz-range-track {
-  top: -8px;
+  cursor: pointer;
+}
+
+.range-y {
+  appearance: none;
+  background: none;
+  rotate: 270deg;
+  position: relative;
+  border-radius: 20px;
+  outline-offset: -5px;
+  padding: 0 6px;
 }
 
 .simple-range {

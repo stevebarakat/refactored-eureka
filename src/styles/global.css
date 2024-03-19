@@ -96,16 +96,6 @@ select[name="song-select"] {
   padding: 12px;
 }
 
-.range-y {
-  appearance: none;
-  background: none;
-  rotate: 270deg;
-  position: relative;
-  border-radius: 20px;
-  outline-offset: -5px;
-  padding: 0 6px;
-}
-
 .fx-panel {
   background: var(--blackLinear);
   border-radius: 8px;
