@@ -16,17 +16,17 @@ export const trackMachine = setup({
     },
 
     events: {} as
+      | { type: "CHANGE_VOLUME"; volume: number }
+      | { type: "CHANGE_PAN"; pan: number }
       | { type: "TOGGLE_SOLO"; channel: Channel }
       | { type: "TOGGLE_MUTE"; channel: Channel }
-      | { type: "CHANGE_VOLUME"; volume: number }
       | { type: "TOGGLE_FX_PANEL" }
       | {
           type: "CHANGE_FX";
           fxName: string;
           fxId: number;
           action: string;
-        }
-      | { type: "CHANGE_PAN"; pan: number },
+        },
     input: {} as {
       track: SourceTrack;
       channel: Channel | undefined;
