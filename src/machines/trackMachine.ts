@@ -35,6 +35,7 @@ export const trackMachine = setup({
   actions: {
     setVolume: assign(({ context, event }) => {
       assertEvent(event, "CHANGE_VOLUME");
+      console.log("volume", event.volume);
       const volume = parseFloat(event.volume.toFixed(2));
       const scaled = scale(logarithmically(volume));
       produce(context, (draft) => {

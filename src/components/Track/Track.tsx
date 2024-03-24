@@ -4,6 +4,7 @@ import ChannelLabel from "../ChannelLabel";
 import { FxPanel } from "../FxPanel";
 import { FxSelector } from "../Selectors";
 import { TrackContext } from "@/machines/trackMachine";
+import AutomationMode from "../AutomationMode";
 
 export default function Track({ trackId }: { trackId: number }) {
   const { context } = TrackContext.useSelector((s) => s);
@@ -24,6 +25,7 @@ export default function Track({ trackId }: { trackId: number }) {
           <SoloMute />
           <ChannelLabel name={track?.name || `track ${trackId + 1}`} />
         </div>
+        <AutomationMode trackId={trackId} param="volume" />
       </div>
     </>
   );
