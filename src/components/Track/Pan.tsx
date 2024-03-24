@@ -1,6 +1,7 @@
 import { TrackContext } from "@/machines/trackMachine";
+import AutomationMode from "../AutomationMode";
 
-function Pan() {
+function Pan({ trackId }: { trackId: number }) {
   const { send } = TrackContext.useActorRef();
   const { pan } = TrackContext.useSelector((state) => state.context);
 
@@ -23,6 +24,7 @@ function Pan() {
         <span>L</span>
         <span>R</span>
       </div>
+      <AutomationMode trackId={trackId} param="pan" />
     </div>
   );
 }

@@ -41,14 +41,18 @@ function useRead({ trackId, playbackMode, param }) {
 
   const setParam = useCallback(
     (data: { time: number; value: number }) => {
+      console.log({
+        type: `CHANGE_${param.toUpperCase()}`,
+        [param]: data.value,
+      });
       t.schedule(() => {
         send({
-          type: "CHANGE_VOLUME",
-          volume: data.value,
+          type: `CHANGE_${param.toUpperCase()}`,
+          [param]: data.value,
         });
       }, data.time);
     },
-    [send]
+    [send, param]
   );
 
   const [volumeData, setVolumeData] = useState([]);
@@ -78,11 +82,23 @@ function AutomationMode({ trackId, param }: Props) {
   const send = automationActor.send;
   const state = useSelector(automationActor, (s) => s);
 
-  const { volume } = TrackContext.useSelector((s) => s.context);
+  const { volume, pan } = TrackContext.useSelector((s) => s.context);
+  const [value, setValue] = useState(volume);
 
-  // console.log("state", state.value);
+  useEffect(() => {
+    switch (param) {
+      case "volume":
+        setValue(volume);
+        break;
+      case "pan":
+        setValue(pan);
+        break;
+      default:
+        break;
+    }
+  }, [param, pan, volume]);
 
-  useWrite({ id: trackId, value: volume, playbackMode: state.value, param });
+  useWrite({ id: trackId, value, playbackMode: state.value, param });
   useRead({ trackId, playbackMode: state.value, param });
 
   function handleChange(e) {

@@ -5,22 +5,6 @@ export const automationMachine = setup({
     context: {} as {},
     events: {} as { type: "READ" } | { type: "WRITE" } | { type: "TURN_OFF" },
   },
-  schemas: {
-    events: {
-      READ: {
-        type: "object",
-        properties: {},
-      },
-      WRITE: {
-        type: "object",
-        properties: {},
-      },
-      TURN_OFF: {
-        type: "object",
-        properties: {},
-      },
-    },
-  },
 }).createMachine({
   context: {},
   id: "Automation",

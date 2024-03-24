@@ -18,7 +18,7 @@ export default function Track({ trackId }: { trackId: number }) {
         <FxPanel trackId={trackId} />
         <FxSelector trackId={trackId} />
         <div className="channel">
-          <Pan />
+          <Pan trackId={trackId} />
           <Fader>
             <Meter channel={channel} />
           </Fader>
