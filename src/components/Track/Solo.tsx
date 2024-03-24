@@ -2,7 +2,7 @@ import { Toggle } from "../Buttons";
 import { TrackContext } from "@/machines/trackMachine";
 
 function Solo() {
-  const { channel, track } = TrackContext.useSelector((state) => state.context);
+  const { track } = TrackContext.useSelector((state) => state.context);
 
   const { send } = TrackContext.useActorRef();
   const isActive = TrackContext.useSelector((state) =>
@@ -14,10 +14,8 @@ function Solo() {
       id={`trackSolo${track.id}`}
       checked={isActive}
       onChange={() => {
-        if (!channel) return;
         send({
           type: "TOGGLE_SOLO",
-          channel,
         });
       }}
     >

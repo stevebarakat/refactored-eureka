@@ -18,8 +18,8 @@ export const trackMachine = setup({
     events: {} as
       | { type: "CHANGE_VOLUME"; volume: number }
       | { type: "CHANGE_PAN"; pan: number }
-      | { type: "TOGGLE_SOLO"; channel: Channel }
-      | { type: "TOGGLE_MUTE"; channel: Channel }
+      | { type: "TOGGLE_SOLO" }
+      | { type: "TOGGLE_MUTE" }
       | { type: "TOGGLE_FX_PANEL" }
       | {
           type: "CHANGE_FX";
@@ -87,13 +87,11 @@ export const trackMachine = setup({
         };
       }
     }),
-    toggleMute: function ({ event }) {
-      assertEvent(event, "TOGGLE_MUTE");
-      event.channel.mute = !event.channel?.mute;
+    toggleMute: function ({ context }) {
+      context.channel!.mute = !context.channel!.mute;
     },
-    toggleSolo: function ({ event }) {
-      assertEvent(event, "TOGGLE_SOLO");
-      event.channel.solo = !event.channel?.solo;
+    toggleSolo: function ({ context }) {
+      context.channel!.solo = !context.channel!.solo;
     },
   },
 }).createMachine({
