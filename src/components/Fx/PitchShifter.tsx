@@ -35,26 +35,26 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
 }
 
 // !!! --- READ --- !!! //
-function useRead({ trackId, playbackMode, param, pitchShift }) {
+function useRead({ trackId, playbackMode, pitchShift }) {
   const { send } = PitchContext.useActorRef();
   const loop = useRef(0);
 
   const setParam = useCallback(
-    (data: { time: number; value: number }) => {
+    (data: { time: number; value: { mix: number; pitch: number } }) => {
       loop.current = t.schedule(() => {
-        console.log({
-          type: `CHANGE_${param.toUpperCase()}`,
-          [param]: data.value[param as keyof typeof data.value],
+        send({
+          type: "CHANGE_MIX",
+          mix: data.value.mix,
           pitchShift,
         });
         send({
-          type: `CHANGE_${param.toUpperCase()}`,
-          [param]: data.value[param as keyof typeof data.value],
+          type: "CHANGE_PITCH",
+          pitch: data.value.pitch,
           pitchShift,
         });
       }, data.time);
     },
-    [send, param, pitchShift]
+    [send, pitchShift]
   );
 
   const [pitchData, setPitchData] = useState([]);
@@ -79,7 +79,7 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
     return () => {
       t.clear(loop.current);
     };
-  }, [trackId, param, setParam, playbackMode]);
+  }, [trackId, pitchData, setParam, playbackMode]);
 
   return null;
 }
@@ -131,8 +131,8 @@ function PitchShifter({ pitchShift, trackId }: Props) {
           type="range"
           id="mix"
           value={context.pitchData.mix}
+          onPointerDown={() => setParam("mix")}
           onChange={(e) => {
-            setParam("mix");
             send({
               type: "CHANGE_MIX",
               mix: parseFloat(e.currentTarget.value),
@@ -150,8 +150,8 @@ function PitchShifter({ pitchShift, trackId }: Props) {
           type="range"
           id="pitch"
           value={context.pitchData.pitch}
+          onPointerDown={() => setParam("pitch")}
           onChange={(e) => {
-            setParam("pitch");
             send({
               type: "CHANGE_PITCH",
               pitch: parseFloat(e.currentTarget.value),
