@@ -10,6 +10,17 @@ type Props = {
   trackId: number;
 };
 
+type ReadProps = Props & { playbackMode: "reading" | "writing" | "off" };
+
+type WriteProps = {
+  id: number;
+  value: { mix: number; pitch: number };
+  playbackMode: string;
+  param: string;
+};
+
+type PitchData = { time: number; value: { mix: number; pitch: number } };
+
 // !!! --- WRITE --- !!! //
 const data = new Map<number, object>();
 function useWrite({ id, value, playbackMode, param }: WriteProps) {
@@ -35,11 +46,11 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
 }
 
 // !!! --- READ --- !!! //
-function useRead({ trackId, playbackMode, pitchShift }) {
+function useRead({ trackId, playbackMode, pitchShift }: ReadProps) {
   const { send } = PitchContext.useActorRef();
   const loop = useRef(0);
 
-  const setParam = useCallback(
+  const setData = useCallback(
     (data: { time: number; value: { mix: number; pitch: number } }) => {
       loop.current = t.schedule(() => {
         send({
@@ -57,29 +68,21 @@ function useRead({ trackId, playbackMode, pitchShift }) {
     [send, pitchShift]
   );
 
-  const [pitchData, setPitchData] = useState([]);
-  localforage.getItem(`pitchData-${trackId}`).then((val) => {
-    // console.log("val", val);
-    return setPitchData(val);
-  });
+  const [pitchData, setPitchData] = useState<Map<number, PitchData> | null>();
+  localforage
+    .getItem<Map<number, PitchData>>(`pitchData-${trackId}`)
+    .then((val) => setPitchData(val));
 
   useEffect(() => {
-    console.log("playbackMode", playbackMode);
     if (playbackMode !== "reading" || !pitchData) return;
 
-    // console.log("pitchData", pitchData);
-    // console.log("trackId", trackId);
-    // console.log("playbackMode", playbackMode);
-    // console.log("param", param);
-
     for (const value of pitchData.values()) {
-      console.log("value", value);
-      setParam(value);
+      setData(value);
     }
     return () => {
       t.clear(loop.current);
     };
-  }, [trackId, pitchData, setParam, playbackMode]);
+  }, [trackId, pitchData, setData, playbackMode]);
 
   return null;
 }
@@ -96,7 +99,7 @@ function PitchShifter({ pitchShift, trackId }: Props) {
     playbackMode,
     param,
   });
-  useRead({ trackId, playbackMode, param, pitchShift });
+  useRead({ trackId, playbackMode, pitchShift });
 
   return (
     <div>
