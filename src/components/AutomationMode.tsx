@@ -7,7 +7,6 @@ import { useCallback, useEffect, useState } from "react";
 import localforage from "localforage";
 
 type Props = {
-  trackId: number;
   param: string;
 };
 
@@ -73,12 +72,12 @@ function useRead({ trackId, playbackMode, param }) {
   return null;
 }
 
-function AutomationMode({ trackId, param }: Props) {
+function AutomationMode({ param }: Props) {
   const automationActor = useActorRef(automationMachine);
   const send = automationActor.send;
   const state = useSelector(automationActor, (s) => s);
 
-  const { volume, pan } = TrackContext.useSelector((s) => s.context);
+  const { volume, pan, trackId } = TrackContext.useSelector((s) => s.context);
   const [value, setValue] = useState(volume);
 
   useEffect(() => {

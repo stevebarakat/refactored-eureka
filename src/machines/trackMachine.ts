@@ -8,6 +8,7 @@ export const trackMachine = setup({
   types: {
     context: {} as {
       track: SourceTrack;
+      trackId: number;
       channel: Channel | undefined;
       volume: number;
       pan: number;
@@ -29,6 +30,7 @@ export const trackMachine = setup({
         },
     input: {} as {
       track: SourceTrack;
+      trackId: number;
       channel: Channel | undefined;
     },
   },
@@ -97,6 +99,7 @@ export const trackMachine = setup({
 }).createMachine({
   context: ({ input }) => ({
     track: input.track,
+    trackId: input.trackId,
     channel: input.channel,
     volume: -32,
     pan: 0,

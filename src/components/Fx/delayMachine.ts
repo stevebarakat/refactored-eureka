@@ -14,17 +14,17 @@ export const delayMachine = createMachine(
     states: {
       ready: {
         on: {
-          "DELAY.CHANGE_MIX": {
+          CHANGE_MIX: {
             actions: {
               type: "setMix",
             },
           },
-          "DELAY.CHANGE_TIME": {
+          CHANGE_TIME: {
             actions: {
               type: "setDelayTime",
             },
           },
-          "DELAY.CHANGE_FEEDBACK": {
+          CHANGE_FEEDBACK: {
             actions: {
               type: "setFeedback",
             },
@@ -35,30 +35,30 @@ export const delayMachine = createMachine(
     types: {
       events: {} as
         | {
-            type: "DELAY.CHANGE_FEEDBACK";
+            type: "CHANGE_FEEDBACK";
             feedback: number;
             delay: FeedbackDelay;
           }
-        | { type: "DELAY.CHANGE_TIME"; delayTime: number; delay: FeedbackDelay }
-        | { type: "DELAY.CHANGE_MIX"; mix: number; delay: FeedbackDelay },
+        | { type: "CHANGE_TIME"; delayTime: number; delay: FeedbackDelay }
+        | { type: "CHANGE_MIX"; mix: number; delay: FeedbackDelay },
     },
   },
   {
     actions: {
       setMix: assign(({ event }) => {
-        assertEvent(event, "DELAY.CHANGE_MIX");
+        assertEvent(event, "CHANGE_MIX");
         const mix = event.mix;
         event.delay.wet.value = mix;
         return { mix };
       }),
       setDelayTime: assign(({ event }) => {
-        assertEvent(event, "DELAY.CHANGE_TIME");
+        assertEvent(event, "CHANGE_TIME");
         const delayTime = event.delayTime;
         event.delay.delayTime.value = delayTime;
         return { delayTime };
       }),
       setFeedback: assign(({ event }) => {
-        assertEvent(event, "DELAY.CHANGE_FEEDBACK");
+        assertEvent(event, "CHANGE_FEEDBACK");
         const feedback = event.feedback;
         event.delay.feedback.value = feedback;
         return { feedback };

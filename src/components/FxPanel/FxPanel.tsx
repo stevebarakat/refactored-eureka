@@ -14,11 +14,13 @@ const defaults = {
   minHeight: "fit-content",
 };
 
-function FxPanel({ trackId }: { trackId: number }) {
+function FxPanel() {
   const isOpen = TrackContext.useSelector((state) =>
     state.matches({ fxPanel: "open" })
   );
-  const { track, fx, fxNames } = TrackContext.useSelector((s) => s.context);
+  const { track, trackId, fx, fxNames } = TrackContext.useSelector(
+    (s) => s.context
+  );
 
   const [delayIndex, setDelayIndex] = useState(-1);
   const [pitchIndex, setPitchIndex] = useState(-1);

@@ -2,8 +2,10 @@ import { array } from "@/utils";
 import { upperFirst } from "lodash";
 import { TrackContext } from "@/machines/trackMachine";
 
-function FxSelector({ trackId }: { trackId: number }) {
-  const { fxNames } = TrackContext.useSelector((state) => state.context);
+function FxSelector() {
+  const { fxNames, trackId } = TrackContext.useSelector(
+    (state) => state.context
+  );
   const { send } = TrackContext.useActorRef();
   const isOpen = TrackContext.useSelector((state) =>
     state.matches({ fxPanel: "open" })

@@ -26,7 +26,7 @@ function Delay({ delay }: Props) {
           value={mix}
           onChange={(e) =>
             send({
-              type: "DELAY.CHANGE_MIX",
+              type: "CHANGE_MIX",
               mix: parseFloat(e.currentTarget.value),
               delay,
             })
@@ -45,7 +45,7 @@ function Delay({ delay }: Props) {
           value={delayTime}
           onChange={(e) =>
             send({
-              type: "DELAY.CHANGE_TIME",
+              type: "CHANGE_TIME",
               delayTime: parseFloat(e.currentTarget.value),
               delay,
             })
@@ -64,7 +64,7 @@ function Delay({ delay }: Props) {
           value={feedback}
           onChange={(e) =>
             send({
-              type: "DELAY.CHANGE_FEEDBACK",
+              type: "CHANGE_FEEDBACK",
               feedback: parseFloat(e.currentTarget.value),
               delay,
             })

@@ -1,9 +1,9 @@
 import { TrackContext } from "@/machines/trackMachine";
 import AutomationMode from "../AutomationMode";
 
-function Pan({ trackId }: { trackId: number }) {
+function Pan() {
   const { send } = TrackContext.useActorRef();
-  const { pan } = TrackContext.useSelector((state) => state.context);
+  const { pan, trackId } = TrackContext.useSelector((state) => state.context);
 
   return (
     <div className="pan">

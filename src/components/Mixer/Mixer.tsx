@@ -23,9 +23,9 @@ export default function Mixer() {
         {tracks?.map((track: SourceTrack, i: number) => (
           <TrackContext.Provider
             key={track.id}
-            options={{ input: { track, channel: channels[i] } }}
+            options={{ input: { track, trackId: i, channel: channels[i] } }}
           >
-            <Track trackId={i} />
+            <Track />
           </TrackContext.Provider>
         ))}
         <Main />
