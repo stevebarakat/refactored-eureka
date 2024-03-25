@@ -80,6 +80,7 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
 }
 
 function PitchShifter({ pitchShift, trackId }: Props) {
+  const [param, setParam] = useState("pitch");
   const { send } = PitchContext.useActorRef();
   const playbackMode = PitchContext.useSelector((s) => s.value);
   const { context } = PitchContext.useSelector((s) => s);
@@ -88,9 +89,9 @@ function PitchShifter({ pitchShift, trackId }: Props) {
     id: trackId,
     value: context.pitchData,
     playbackMode,
-    param: "pitch",
+    param,
   });
-  useRead({ trackId, playbackMode, param: "pitch", pitchShift });
+  useRead({ trackId, playbackMode, param, pitchShift });
 
   return (
     <div>
