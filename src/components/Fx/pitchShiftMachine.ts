@@ -5,8 +5,7 @@ import { assign, assertEvent, setup } from "xstate";
 export const pitchShiftMachine = setup({
   types: {
     context: {} as {
-      mix: number;
-      pitch: number;
+      pitchData: { mix: number; pitch: number };
     },
     events: {} as
       | { type: "READ" }
@@ -20,25 +19,36 @@ export const pitchShiftMachine = setup({
         },
   },
   actions: {
-    setMix: assign(({ event }) => {
+    setMix: assign(({ context, event }) => {
       assertEvent(event, "CHANGE_MIX");
       const mix = event.mix;
       event.pitchShift.wet.value = mix;
-      return { mix };
+      return {
+        pitchData: {
+          ...context.pitchData,
+          mix,
+        },
+      };
     }),
-    setPitch: assign(({ event }) => {
+    setPitch: assign(({ context, event }) => {
       assertEvent(event, "CHANGE_PITCH");
-      // console.log("event", event);
       const pitch = event.pitch;
       event.pitchShift.pitch = pitch;
-      return { pitch };
+      return {
+        pitchData: {
+          ...context.pitchData,
+          pitch,
+        },
+      };
     }),
   },
   actors: {},
 }).createMachine({
   context: {
-    mix: 0.5,
-    pitch: 0,
+    pitchData: {
+      mix: 0.5,
+      pitch: 0,
+    },
   },
   id: "pitchShiftMachine",
   initial: "off",
