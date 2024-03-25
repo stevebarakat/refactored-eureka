@@ -2,7 +2,7 @@ import { PitchContext } from "@/components/Fx/pitchShiftMachine";
 import { roundFourth } from "@/utils";
 import { Transport as t } from "tone";
 import localforage from "localforage";
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { PitchShift } from "tone";
 
 type Props = {
@@ -37,10 +37,11 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
 // !!! --- READ --- !!! //
 function useRead({ trackId, playbackMode, param, pitchShift }) {
   const { send } = PitchContext.useActorRef();
+  const loop = useRef(0);
 
   const setParam = useCallback(
     (data: { time: number; value: number }) => {
-      t.schedule(() => {
+      loop.current = t.schedule(() => {
         console.log({
           type: `CHANGE_${param.toUpperCase()}`,
           [param]: data.value[param as keyof typeof data.value],
@@ -63,6 +64,7 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
   });
 
   useEffect(() => {
+    console.log("playbackMode", playbackMode);
     if (playbackMode !== "reading" || !pitchData) return;
 
     // console.log("pitchData", pitchData);
@@ -74,6 +76,9 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
       console.log("value", value);
       setParam(value);
     }
+    return () => {
+      t.clear(loop.current);
+    };
   }, [trackId, param, setParam, playbackMode]);
 
   return null;
@@ -97,14 +102,15 @@ function PitchShifter({ pitchShift, trackId }: Props) {
     <div>
       <h3>PitchShifter</h3>
       <select
+        value={playbackMode}
         onChange={(e) => {
           const value = e.target.value;
           switch (value) {
             case "off":
               return send({ type: "TURN_OFF" });
-            case "read":
+            case "reading":
               return send({ type: "READ" });
-            case "write":
+            case "writing":
               return send({ type: "WRITE" });
             default:
               break;
@@ -112,8 +118,8 @@ function PitchShifter({ pitchShift, trackId }: Props) {
         }}
       >
         <option value="off">off</option>
-        <option value="read">read</option>
-        <option value="write">write</option>
+        <option value="reading">read</option>
+        <option value="writing">write</option>
       </select>
 
       <div className="flex-y">
