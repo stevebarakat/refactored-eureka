@@ -2,7 +2,7 @@ import { PitchContext } from "@/components/Fx/pitchShiftMachine";
 import { roundFourth } from "@/utils";
 import { Transport as t } from "tone";
 import localforage from "localforage";
-import { useEffect } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { PitchShift } from "tone";
 
 type Props = {
@@ -34,13 +34,57 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
   return data;
 }
 
+// !!! --- READ --- !!! //
+function useRead({ trackId, playbackMode, param, pitchShift }) {
+  const { send } = PitchContext.useActorRef();
+
+  const setParam = useCallback(
+    (data: { time: number; value: number }) => {
+      t.schedule(() => {
+        console.log({
+          type: `CHANGE_${param.toUpperCase()}`,
+          [param]: data.value,
+          pitchShift,
+        });
+        send({
+          type: `CHANGE_${param.toUpperCase()}`,
+          [param]: data.value,
+          pitchShift,
+        });
+      }, data.time);
+    },
+    [send, param, pitchShift]
+  );
+
+  const [pitchData, setPitchData] = useState([]);
+  localforage.getItem(`${param}-${trackId}`).then((val) => {
+    return setPitchData(val);
+  });
+
+  useEffect(() => {
+    if (playbackMode !== "reading" || !pitchData) return;
+
+    // console.log("pitchData", pitchData);
+    // console.log("trackId", trackId);
+    // console.log("playbackMode", playbackMode);
+    // console.log("param", param);
+
+    for (const value of pitchData.values()) {
+      // console.log("value", value);
+      setParam(value);
+    }
+  }, [trackId, param, setParam, playbackMode]);
+
+  return null;
+}
+
 function PitchShifter({ pitchShift, trackId }: Props) {
   const { send } = PitchContext.useActorRef();
   const playbackMode = PitchContext.useSelector((s) => s.value);
   const { context } = PitchContext.useSelector((s) => s);
-  console.log("context", context);
 
   useWrite({ id: trackId, value: context.pitch, playbackMode, param: "pitch" });
+  useRead({ trackId, playbackMode, param: "pitch", pitchShift });
 
   return (
     <div>
@@ -92,6 +136,7 @@ function PitchShifter({ pitchShift, trackId }: Props) {
           type="range"
           name="pitch"
           id="pitch"
+          value={context.pitch}
           onChange={(e) =>
             send({
               type: "CHANGE_PITCH",

@@ -41,10 +41,6 @@ function useRead({ trackId, playbackMode, param }) {
 
   const setParam = useCallback(
     (data: { time: number; value: number }) => {
-      console.log({
-        type: `CHANGE_${param.toUpperCase()}`,
-        [param]: data.value,
-      });
       t.schedule(() => {
         send({
           type: `CHANGE_${param.toUpperCase()}`,

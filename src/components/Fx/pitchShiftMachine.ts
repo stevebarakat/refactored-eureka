@@ -7,7 +7,6 @@ export const pitchShiftMachine = setup({
     context: {} as {
       mix: number;
       pitch: number;
-      data: Map<number, { id: number; value: number; time: number }>;
     },
     events: {} as
       | { type: "READ" }
@@ -29,6 +28,7 @@ export const pitchShiftMachine = setup({
     }),
     setPitch: assign(({ event }) => {
       assertEvent(event, "CHANGE_PITCH");
+      // console.log("event", event);
       const pitch = event.pitch;
       event.pitchShift.pitch = pitch;
       return { pitch };
@@ -39,7 +39,6 @@ export const pitchShiftMachine = setup({
   context: {
     mix: 0.5,
     pitch: 0,
-    data: new Map(),
   },
   id: "pitchShiftMachine",
   initial: "off",
