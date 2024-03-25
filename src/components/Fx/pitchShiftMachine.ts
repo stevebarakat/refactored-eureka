@@ -1,56 +1,92 @@
 import { createActorContext } from "@xstate/react";
 import { PitchShift } from "tone";
-import { createMachine, assign, assertEvent } from "xstate";
+import { assign, assertEvent, setup } from "xstate";
 
-export const pitchShiftMachine = createMachine(
-  {
-    id: "pitchShiftMachine",
-    context: {
-      mix: 0.5,
-      pitch: 0,
+export const pitchShiftMachine = setup({
+  types: {
+    context: {} as {
+      mix: number;
+      pitch: number;
+      data: Map<number, { id: number; value: number; time: number }>;
     },
-    initial: "ready",
-    states: {
-      ready: {
-        on: {
-          CHANGE_MIX: {
-            actions: {
-              type: "setMix",
-            },
-          },
-          CHANGE_PITCH: {
-            actions: {
-              type: "setPitch",
-            },
-          },
+    events: {} as
+      | { type: "READ" }
+      | { type: "WRITE" }
+      | { type: "TURN_OFF" }
+      | { type: "CHANGE_MIX"; mix: number; pitchShift: PitchShift }
+      | {
+          type: "CHANGE_PITCH";
+          pitch: number;
+          pitchShift: PitchShift;
+        },
+  },
+  actions: {
+    setMix: assign(({ event }) => {
+      assertEvent(event, "CHANGE_MIX");
+      const mix = event.mix;
+      event.pitchShift.wet.value = mix;
+      return { mix };
+    }),
+    setPitch: assign(({ event }) => {
+      assertEvent(event, "CHANGE_PITCH");
+      const pitch = event.pitch;
+      event.pitchShift.pitch = pitch;
+      return { pitch };
+    }),
+  },
+  actors: {},
+}).createMachine({
+  context: {
+    mix: 0.5,
+    pitch: 0,
+    data: new Map(),
+  },
+  id: "pitchShiftMachine",
+  initial: "off",
+  on: {
+    CHANGE_MIX: {
+      actions: {
+        type: "setMix",
+      },
+    },
+    CHANGE_PITCH: {
+      actions: {
+        type: "setPitch",
+      },
+    },
+  },
+  states: {
+    off: {
+      on: {
+        READ: {
+          target: "reading",
+        },
+        WRITE: {
+          target: "writing",
         },
       },
     },
-    types: {
-      events: {} as
-        | { type: "CHANGE_PITCH"; pitch: number; pitchShift: PitchShift }
-        | { type: "CHANGE_MIX"; mix: number; pitchShift: PitchShift },
+    reading: {
+      on: {
+        WRITE: {
+          target: "writing",
+        },
+        TURN_OFF: {
+          target: "off",
+        },
+      },
+    },
+    writing: {
+      on: {
+        READ: {
+          target: "reading",
+        },
+        TURN_OFF: {
+          target: "off",
+        },
+      },
     },
   },
-  {
-    actions: {
-      setMix: assign(({ event }) => {
-        assertEvent(event, "CHANGE_MIX");
-        const mix = event.mix;
-        event.pitchShift.wet.value = mix;
-        return { mix };
-      }),
-      setPitch: assign(({ event }) => {
-        assertEvent(event, "CHANGE_PITCH");
-        const pitch = event.pitch;
-        event.pitchShift.pitch = pitch;
-        return { pitch };
-      }),
-    },
-    actors: {},
-    guards: {},
-    delays: {},
-  }
-);
+});
 
 export const PitchContext = createActorContext(pitchShiftMachine);
