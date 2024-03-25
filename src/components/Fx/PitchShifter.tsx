@@ -80,6 +80,7 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
 }
 
 function PitchShifter({ pitchShift, trackId }: Props) {
+  const [param, setParam] = useState("mix");
   const { send } = PitchContext.useActorRef();
   const playbackMode = PitchContext.useSelector((s) => s.value);
   const { context } = PitchContext.useSelector((s) => s);
@@ -88,9 +89,9 @@ function PitchShifter({ pitchShift, trackId }: Props) {
     id: trackId,
     value: context.pitchData,
     playbackMode,
-    param: "pitch",
+    param,
   });
-  useRead({ trackId, playbackMode, param: "pitch", pitchShift });
+  useRead({ trackId, playbackMode, param, pitchShift });
 
   return (
     <div>
@@ -122,15 +123,16 @@ function PitchShifter({ pitchShift, trackId }: Props) {
           max={1}
           step={0.01}
           type="range"
-          name="mix"
           id="mix"
-          onChange={(e) =>
+          value={context.pitchData.mix}
+          onChange={(e) => {
+            setParam("mix");
             send({
               type: "CHANGE_MIX",
               mix: parseFloat(e.currentTarget.value),
               pitchShift,
-            })
-          }
+            });
+          }}
         />
       </div>
       <div className="flex-y">
@@ -140,16 +142,16 @@ function PitchShifter({ pitchShift, trackId }: Props) {
           max={36}
           step={1}
           type="range"
-          name="pitch"
           id="pitch"
           value={context.pitchData.pitch}
-          onChange={(e) =>
+          onChange={(e) => {
+            setParam("pitch");
             send({
               type: "CHANGE_PITCH",
               pitch: parseFloat(e.currentTarget.value),
               pitchShift,
-            })
-          }
+            });
+          }}
         />
       </div>
     </div>
