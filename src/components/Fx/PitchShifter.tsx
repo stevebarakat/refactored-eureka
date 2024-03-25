@@ -1,9 +1,8 @@
 import { PitchContext } from "@/components/Fx/pitchShiftMachine";
 import { roundFourth } from "@/utils";
-import { Transport as t } from "tone";
 import localforage from "localforage";
 import { useEffect, useCallback, useState, useRef } from "react";
-import { PitchShift } from "tone";
+import { type PitchShift, Transport as t } from "tone";
 
 type Props = {
   pitchShift: PitchShift;
@@ -14,12 +13,17 @@ type ReadProps = Props & { playbackMode: "reading" | "writing" | "off" };
 
 type WriteProps = {
   id: number;
-  value: { mix: number; pitch: number };
+  value: PitchData;
   playbackMode: string;
   param: string;
 };
 
-type PitchData = { time: number; value: { mix: number; pitch: number } };
+type PitchData = { mix: number; pitch: number };
+
+type PitchAutomationData = {
+  time: number;
+  value: PitchData;
+};
 
 // !!! --- WRITE --- !!! //
 const data = new Map<number, object>();
@@ -68,9 +72,12 @@ function useRead({ trackId, playbackMode, pitchShift }: ReadProps) {
     [send, pitchShift]
   );
 
-  const [pitchData, setPitchData] = useState<Map<number, PitchData> | null>();
+  const [pitchData, setPitchData] = useState<Map<
+    number,
+    PitchAutomationData
+  > | null>();
   localforage
-    .getItem<Map<number, PitchData>>(`pitchData-${trackId}`)
+    .getItem<Map<number, PitchAutomationData>>(`pitchData-${trackId}`)
     .then((val) => setPitchData(val));
 
   useEffect(() => {

@@ -41,7 +41,10 @@ function FxPanel() {
               <Rnd key="delay" {...defaults}>
                 <FxHeader track={track} trackId={trackId} />
                 <DelayContext.Provider key="delay">
-                  <Delay delay={delayIndex !== -1 ? fx[delayIndex] : fx[-1]} />
+                  <Delay
+                    delay={delayIndex !== -1 ? fx[delayIndex] : fx[-1]}
+                    trackId={trackId}
+                  />
                 </DelayContext.Provider>
               </Rnd>
             );

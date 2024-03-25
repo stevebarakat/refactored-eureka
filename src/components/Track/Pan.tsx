@@ -3,7 +3,7 @@ import AutomationMode from "../AutomationMode";
 
 function Pan() {
   const { send } = TrackContext.useActorRef();
-  const { pan, trackId } = TrackContext.useSelector((state) => state.context);
+  const { pan } = TrackContext.useSelector((state) => state.context);
 
   return (
     <div className="pan">
@@ -24,7 +24,7 @@ function Pan() {
         <span>L</span>
         <span>R</span>
       </div>
-      <AutomationMode trackId={trackId} param="pan" />
+      <AutomationMode param="pan" />
     </div>
   );
 }
