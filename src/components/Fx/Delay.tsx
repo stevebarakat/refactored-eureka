@@ -7,6 +7,9 @@ type Props = {
 
 function Delay({ delay }: Props) {
   const { send } = DelayContext.useActorRef();
+  const { delayTime, mix, feedback } = DelayContext.useSelector(
+    (s) => s.context
+  );
 
   return (
     <div>
@@ -20,6 +23,7 @@ function Delay({ delay }: Props) {
           type="range"
           name="mix"
           id="mix"
+          value={mix}
           onChange={(e) =>
             send({
               type: "DELAY.CHANGE_MIX",
@@ -38,6 +42,7 @@ function Delay({ delay }: Props) {
           type="range"
           name="delayTime"
           id="delayTime"
+          value={delayTime}
           onChange={(e) =>
             send({
               type: "DELAY.CHANGE_TIME",
@@ -56,6 +61,7 @@ function Delay({ delay }: Props) {
           type="range"
           name="feedback"
           id="feedback"
+          value={feedback}
           onChange={(e) =>
             send({
               type: "DELAY.CHANGE_FEEDBACK",
