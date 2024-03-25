@@ -20,7 +20,7 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
       () => {
         const time: number = roundFourth(t.seconds);
         data.set(time, { id, time, value });
-        localforage.setItem(`${param}-${id}`, data);
+        localforage.setItem(`pitchData-${id}`, data);
       },
       0.25,
       0
@@ -43,12 +43,12 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
       t.schedule(() => {
         console.log({
           type: `CHANGE_${param.toUpperCase()}`,
-          [param]: data.value.pitch,
+          [param]: data.value[param as keyof typeof data.value],
           pitchShift,
         });
         send({
           type: `CHANGE_${param.toUpperCase()}`,
-          [param]: data.value.pitch,
+          [param]: data.value[param as keyof typeof data.value],
           pitchShift,
         });
       }, data.time);
@@ -57,7 +57,7 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
   );
 
   const [pitchData, setPitchData] = useState([]);
-  localforage.getItem(`${param}-${trackId}`).then((val) => {
+  localforage.getItem(`pitchData-${trackId}`).then((val) => {
     // console.log("val", val);
     return setPitchData(val);
   });
@@ -80,7 +80,6 @@ function useRead({ trackId, playbackMode, param, pitchShift }) {
 }
 
 function PitchShifter({ pitchShift, trackId }: Props) {
-  const [param, setParam] = useState("pitch");
   const { send } = PitchContext.useActorRef();
   const playbackMode = PitchContext.useSelector((s) => s.value);
   const { context } = PitchContext.useSelector((s) => s);
@@ -89,9 +88,9 @@ function PitchShifter({ pitchShift, trackId }: Props) {
     id: trackId,
     value: context.pitchData,
     playbackMode,
-    param,
+    param: "pitch",
   });
-  useRead({ trackId, playbackMode, param, pitchShift });
+  useRead({ trackId, playbackMode, param: "pitch", pitchShift });
 
   return (
     <div>
