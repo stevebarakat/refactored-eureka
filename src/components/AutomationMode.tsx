@@ -23,8 +23,6 @@ type WriteProps = {
   param: "volume" | "pan";
 };
 
-type DelayData = { mix: number; delayTime: number; feedback: number };
-
 // !!! --- WRITE --- !!! //
 const data = new Map<number, object>();
 function useWrite({ id, value, playbackMode, param }: WriteProps) {
@@ -46,39 +44,6 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
   return data;
 }
 
-// // !!! --- READ --- !!! //
-// function useRead({ trackId, playbackMode, param }: ReadProps) {
-//   const { send } = TrackContext.useActorRef();
-
-//   const setParam = useCallback(
-//     (data: { time: number; value: number }) => {
-//       t.schedule(() => {
-//         send({
-//           type: `CHANGE_${param.toUpperCase()}`,
-//           [param]: data.value,
-//         });
-//       }, data.time);
-//     },
-//     [send, param]
-//   );
-
-//   const [volumeData, setVolumeData] = useState([]);
-//   localforage.getItem(`${param}-${trackId}`).then((val) => {
-//     return setVolumeData(val);
-//   });
-
-//   useEffect(() => {
-//     if (playbackMode !== "reading" || !volumeData) return;
-
-//     for (const value of volumeData.values()) {
-//       setParam(value);
-//     }
-//   }, [trackId, param, setParam, playbackMode]);
-
-//   return null;
-// }
-
-// let volumeData: Map<number, DelayData> | null = null;
 // !!! --- READ --- !!! //
 function useRead({ trackId, playbackMode, param }: ReadProps) {
   const { send } = TrackContext.useActorRef();
