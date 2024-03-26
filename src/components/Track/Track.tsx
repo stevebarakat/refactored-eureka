@@ -8,7 +8,7 @@ import AutomationMode from "../AutomationMode";
 
 export default function Track() {
   const { context } = TrackContext.useSelector((s) => s);
-  const { channel, track, fx, trackId } = context;
+  const { channel, track, fx } = context;
 
   fx && channel?.chain(...fx);
 
@@ -23,7 +23,7 @@ export default function Track() {
             <Meter channel={channel} />
           </Fader>
           <SoloMute />
-          <ChannelLabel name={track?.name || `track ${trackId + 1}`} />
+          <ChannelLabel name={track.name} />
         </div>
         <AutomationMode param="volume" />
       </div>
