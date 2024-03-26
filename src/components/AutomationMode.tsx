@@ -31,7 +31,6 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
 
     const loop = new Loop(() => {
       const time: number = roundFourth(t.seconds);
-      console.log("time", time);
       data.set(time, { id, time, value });
       localforage.setItem(`${param}-${id}`, data);
     }, 0.25).start();

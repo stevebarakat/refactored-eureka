@@ -23,6 +23,8 @@ function Clock() {
 
   useMemo(() => requestAnimationFrame(animateClock), [animateClock]);
 
+  if (clock < 0) setClock(0);
+
   return (
     <div className="clock">
       <div className="ghost">88:88:88</div>

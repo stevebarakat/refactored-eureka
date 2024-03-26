@@ -1,5 +1,5 @@
 import { DelayContext } from "@/components/Fx/delayMachine";
-import { type FeedbackDelay, Transport as t } from "tone";
+import { type FeedbackDelay, Transport as t, Loop } from "tone";
 import { useEffect, useCallback, useState, useRef } from "react";
 import { roundFourth } from "@/utils";
 import localforage from "localforage";
@@ -31,18 +31,14 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
   useEffect(() => {
     if (playbackMode !== "writing") return;
 
-    const loop = t.scheduleRepeat(
-      () => {
-        const time: number = roundFourth(t.seconds);
-        data.set(time, { id, time, value });
-        localforage.setItem(`delayData-${id}`, data);
-      },
-      0.25,
-      0
-    );
+    const loop = new Loop(() => {
+      const time: number = roundFourth(t.seconds);
+      data.set(time, { id, time, value });
+      localforage.setItem(`delayData-${id}`, data);
+    }, 0.25).start();
 
     return () => {
-      t.clear(loop);
+      loop.dispose();
     };
   }, [id, value, playbackMode, param]);
 
@@ -59,7 +55,7 @@ function useRead({ trackId, playbackMode, delay }: ReadProps) {
       time: number;
       value: { mix: number; delayTime: number; feedback: number };
     }) => {
-      loop.current = t.schedule(() => {
+      loop.current = t.scheduleOnce(() => {
         send({
           type: "CHANGE_MIX",
           mix: data.value.mix,
@@ -97,7 +93,7 @@ function useRead({ trackId, playbackMode, delay }: ReadProps) {
     return () => {
       t.clear(loop.current);
     };
-  }, [trackId, delayData, setData, playbackMode]);
+  }, [trackId, setData, playbackMode]);
 
   return null;
 }

@@ -2,7 +2,7 @@ import { PitchContext } from "@/components/Fx/pitchShiftMachine";
 import { roundFourth } from "@/utils";
 import localforage from "localforage";
 import { useEffect, useCallback, useState, useRef } from "react";
-import { type PitchShift, Transport as t } from "tone";
+import { type PitchShift, Transport as t, Loop } from "tone";
 
 type Props = {
   pitchShift: PitchShift;
@@ -31,18 +31,14 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
   useEffect(() => {
     if (playbackMode !== "writing") return;
 
-    const loop = t.scheduleRepeat(
-      () => {
-        const time: number = roundFourth(t.seconds);
-        data.set(time, { id, time, value });
-        localforage.setItem(`pitchData-${id}`, data);
-      },
-      0.25,
-      0
-    );
+    const loop = new Loop(() => {
+      const time: number = roundFourth(t.seconds);
+      data.set(time, { id, time, value });
+      localforage.setItem(`pitchData-${id}`, data);
+    }, 0.25).start();
 
     return () => {
-      t.clear(loop);
+      loop.dispose();
     };
   }, [id, value, playbackMode, param]);
 
@@ -56,7 +52,7 @@ function useRead({ trackId, playbackMode, pitchShift }: ReadProps) {
 
   const setData = useCallback(
     (data: { time: number; value: { mix: number; pitch: number } }) => {
-      loop.current = t.schedule(() => {
+      loop.current = t.scheduleOnce(() => {
         send({
           type: "CHANGE_MIX",
           mix: data.value.mix,
@@ -89,7 +85,7 @@ function useRead({ trackId, playbackMode, pitchShift }: ReadProps) {
     return () => {
       t.clear(loop.current);
     };
-  }, [trackId, pitchData, setData, playbackMode]);
+  }, [trackId, setData, playbackMode]);
 
   return null;
 }
