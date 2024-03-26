@@ -1,14 +1,29 @@
 import { automationMachine } from "@/machines/automationMachine";
-import { Transport as t } from "tone";
+import { Loop, Transport as t } from "tone";
 import { TrackContext } from "@/machines/trackMachine";
 import { useActorRef, useSelector } from "@xstate/react";
 import { roundFourth } from "@/utils";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import localforage from "localforage";
 
 type Props = {
   param: string;
 };
+
+type ReadProps = {
+  trackId: number;
+  playbackMode: "reading" | "writing" | "off";
+  param: "volume" | "pan";
+};
+
+type WriteProps = {
+  id: number;
+  value: number;
+  playbackMode: "reading" | "writing" | "off";
+  param: "volume" | "pan";
+};
+
+type DelayData = { mix: number; delayTime: number; feedback: number };
 
 // !!! --- WRITE --- !!! //
 const data = new Map<number, object>();
@@ -16,31 +31,62 @@ function useWrite({ id, value, playbackMode, param }: WriteProps) {
   useEffect(() => {
     if (playbackMode !== "writing") return;
 
-    const loop = t.scheduleRepeat(
-      () => {
-        const time: number = roundFourth(t.seconds);
-        data.set(time, { id, time, value });
-        localforage.setItem(`${param}-${id}`, data);
-      },
-      0.25,
-      0
-    );
+    const loop = new Loop(() => {
+      const time: number = roundFourth(t.seconds);
+      console.log("time", time);
+      data.set(time, { id, time, value });
+      localforage.setItem(`${param}-${id}`, data);
+    }, 0.25).start();
 
     return () => {
-      t.clear(loop);
+      loop.dispose();
     };
   }, [id, value, playbackMode, param]);
 
   return data;
 }
 
+// // !!! --- READ --- !!! //
+// function useRead({ trackId, playbackMode, param }: ReadProps) {
+//   const { send } = TrackContext.useActorRef();
+
+//   const setParam = useCallback(
+//     (data: { time: number; value: number }) => {
+//       t.schedule(() => {
+//         send({
+//           type: `CHANGE_${param.toUpperCase()}`,
+//           [param]: data.value,
+//         });
+//       }, data.time);
+//     },
+//     [send, param]
+//   );
+
+//   const [volumeData, setVolumeData] = useState([]);
+//   localforage.getItem(`${param}-${trackId}`).then((val) => {
+//     return setVolumeData(val);
+//   });
+
+//   useEffect(() => {
+//     if (playbackMode !== "reading" || !volumeData) return;
+
+//     for (const value of volumeData.values()) {
+//       setParam(value);
+//     }
+//   }, [trackId, param, setParam, playbackMode]);
+
+//   return null;
+// }
+
+// let volumeData: Map<number, DelayData> | null = null;
 // !!! --- READ --- !!! //
-function useRead({ trackId, playbackMode, param }) {
+function useRead({ trackId, playbackMode, param }: ReadProps) {
   const { send } = TrackContext.useActorRef();
+  const loop = useRef(0);
 
   const setParam = useCallback(
     (data: { time: number; value: number }) => {
-      t.schedule(() => {
+      loop.current = t.scheduleOnce(() => {
         send({
           type: `CHANGE_${param.toUpperCase()}`,
           [param]: data.value,
@@ -58,15 +104,13 @@ function useRead({ trackId, playbackMode, param }) {
   useEffect(() => {
     if (playbackMode !== "reading" || !volumeData) return;
 
-    // console.log("volumeData", volumeData);
-    // console.log("trackId", trackId);
-    // console.log("playbackMode", playbackMode);
-    // console.log("param", param);
-
     for (const value of volumeData.values()) {
-      console.log("value", value);
-      setParam(value);
+      setParam(value as unknown as { time: number; value: number });
     }
+
+    return () => {
+      t.clear(loop.current);
+    };
   }, [trackId, param, setParam, playbackMode]);
 
   return null;
@@ -93,8 +137,17 @@ function AutomationMode({ param }: Props) {
     }
   }, [param, pan, volume]);
 
-  useWrite({ id: trackId, value, playbackMode: state.value, param });
-  useRead({ trackId, playbackMode: state.value, param });
+  useWrite({
+    id: trackId,
+    value,
+    playbackMode: state.value,
+    param: param as "volume" | "pan",
+  });
+  useRead({
+    trackId,
+    playbackMode: state.value,
+    param: param as "volume" | "pan",
+  });
 
   function handleChange(e) {
     const value = e.currentTarget.value;
